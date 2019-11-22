@@ -25,13 +25,25 @@ class data: ##데이터 저장 클래스
                 print(i[column], end=" ")
                 temp = temp + 1
 
-    
+    def selectionSort(self, column):
+        temp = self.data
+        for i in range(len(temp) - 1):
+            min_idx = i
+            for j in range(i + 1, len(temp)):
+                if temp[j][column] < temp[min_idx][column]:
+                    min_idx = j
+                    temp[i], temp[min_idx] = temp[min_idx], temp[i]
+
     def bubbleSort(self, column): #column은 sort 기준으로 삼을 속성 index
-        dataLen = len(self.data) - 1
+        temp = self.data
+        dataLen = len(temp) - 1
         for i in range(dataLen):
             for j in range(dataLen - i):
-                if self.data[j][column] > self.data[j + 1][column]:
-                    self.data[j], self.data[j+1] = self.data[j+1], self.data[j]
+                if temp[j][column] > temp[j + 1][column]:
+                    temp[j], temp[j+1] = temp[j+1], temp[j]
+                    
+        
+    
 
 
 
@@ -39,7 +51,8 @@ class data: ##데이터 저장 클래스
 if __name__ == "__main__":   
 
     csvFile = open("/programming/GitHub/sortingAnalysis/boston.csv", mode='r') ## 파일 객체 생성
-    timeList = [] #그래프를 그리기 위해 데이터 수 각각의 sort 시간을 저장할 리스트 생성
+    selectionTimeList = []
+    bubbleTimeList = [] #그래프를 그리기 위해 데이터 수 각각의 sort 시간을 저장할 리스트 생성
     
 
     ## 데이터 초기 설정
@@ -51,21 +64,32 @@ if __name__ == "__main__":
         for j in i:
             temp.append(float(j))  #나눈 문자열을 실수(대부분의 값이 실수임)로 변경
         bostonData.addData(temp) #클래스에 저장
+
         startTime = time.time() #타이머 시작
-        bostonData.bubbleSort(12) #12번 컬럼을 기준으로 소팅
+        bostonData.selectionSort(11) #12번 컬럼을 기준으로 소팅
         endTime = time.time() #타이머 저장
         totalTime = endTime - startTime #끝난 시간 - 시작 시간(총 걸린 시간) 
-        timeList.append(totalTime)
+        selectionTimeList.append(totalTime)
+
+        startTime = time.time() #타이머 시작
+        bostonData.bubbleSort(11) #12번 컬럼을 기준으로 소팅
+        endTime = time.time() #타이머 저장
+        totalTime = endTime - startTime #끝난 시간 - 시작 시간(총 걸린 시간) 
+        bubbleTimeList.append(totalTime)
+
         print("data len : ", len(bostonData.data), " sorting time : ", '%.10f' % totalTime)
+
     
     ##표 그리기
-    plt.title("bubble sort") #그래프 제목
+    plt.title("Time performance of sorting algorithms") #그래프 제목
     plt.xlabel("number of dataset") #x축 
     plt.ylabel("sorting time(s)")#y축
     i = range(0, len(bostonData.data))
-    plt.plot(i, timeList, 'b', label = "data") #그래프 그리기
-    #plt.legend(loc="upper right")
-    plt.savefig("bubbleSort.png") #파일로 저장
+    plt.plot(i, selectionTimeList, 'r', label = "selection sort") #그래프 그리기
+    plt.plot(i, bubbleTimeList, 'b', label = "blubble sort") #그래프 그리기
+    
+    plt.legend(loc=2)
+    plt.savefig("/programming/GitHub/sortingAnalysis/sorting.png") #파일로 저장
 
     
 
